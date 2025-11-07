@@ -1,0 +1,27 @@
+export interface Category {
+  id: string;
+  name: string;
+  icon: string;
+  color: string;
+  isDefault: boolean;
+  userId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateCategoryDto {
+  name: string;
+  icon: string;
+  color: string;
+}
+
+export interface UpdateCategoryDto {
+  name?: string;
+  icon?: string;
+  color?: string;
+}
+
+export interface CategoryWithStats extends Category {
+  totalAmount: number;
+  expenseCount: number;
+}
