@@ -8,10 +8,10 @@ import { useFonts } from "expo-font";
 import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import "react-native-reanimated";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useColorScheme } from "@/components/useColorScheme";
+import { tokenStorage } from "@/src/utils/storage";
 export { ErrorBoundary } from "expo-router";
 
 const queryClient = new QueryClient();
@@ -31,8 +31,8 @@ export default function RootLayout() {
     if (fontsError) throw fontsError;
     if (fontsLoaded) {
       (async () => {
-        const token = await AsyncStorage.getItem("token");
-        setLoggedIn(!!token);
+        const isAuthenticated = await tokenStorage.isAuthenticated();
+        setLoggedIn(isAuthenticated);
         SplashScreen.hideAsync();
       })();
     }

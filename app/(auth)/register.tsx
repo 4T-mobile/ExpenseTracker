@@ -2,6 +2,7 @@ import { View, Text, TextInput, Button, StyleSheet } from "react-native";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
+import { AxiosError } from "axios";
 import { RegisterInput, RegisterSchema } from "@/src/schemas/auth.schema";
 import { useRegisterMutation } from "@/src/hooks/useAuthMutation";
 
@@ -13,7 +14,7 @@ export default function RegisterScreen() {
     formState: { errors },
   } = useForm<RegisterInput>({
     resolver: zodResolver(RegisterSchema),
-    defaultValues: { name: "", email: "", password: "" },
+    defaultValues: { username: "", email: "", password: "" },
   });
 
   const mutation = useRegisterMutation();
@@ -26,21 +27,22 @@ export default function RegisterScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>Create Account</Text>
 
-      {/* Name Field */}
+      {/* Username Field */}
       <Controller
         control={control}
-        name="name"
+        name="username"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
             style={styles.input}
-            placeholder="Full Name"
+            placeholder="Username"
+            autoCapitalize="none"
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
           />
         )}
       />
-      {errors.name && <Text style={styles.error}>{errors.name.message}</Text>}
+      {errors.username && <Text style={styles.error}>{errors.username.message}</Text>}
 
       <Controller
         control={control}
@@ -76,6 +78,15 @@ export default function RegisterScreen() {
       />
       {errors.password && (
         <Text style={styles.error}>{errors.password.message}</Text>
+      )}
+
+      {mutation.error && (
+        <View style={styles.apiErrorContainer}>
+          <Text style={styles.apiError}>
+            {(mutation.error as AxiosError<{ message: string }>)?.response?.data?.message ||
+             "Registration failed. Please try again."}
+          </Text>
+        </View>
       )}
 
       <Button
@@ -114,6 +125,19 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   error: { color: "red", fontSize: 13, marginBottom: 8 },
+  apiErrorContainer: {
+    backgroundColor: "#fee",
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: "#fcc",
+  },
+  apiError: {
+    color: "#c00",
+    fontSize: 14,
+    textAlign: "center",
+  },
   footer: { marginTop: 20, alignItems: "center" },
   link: { color: "#007AFF", fontSize: 15 },
 });

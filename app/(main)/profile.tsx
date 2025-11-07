@@ -1,35 +1,131 @@
-import { StyleSheet } from "react-native";
-
-import EditScreenInfo from "@/components/EditScreenInfo";
-import { Text, View } from "@/components/Themed";
+import React, { useState } from 'react';
+import { StyleSheet, ScrollView, Alert } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Screen, Container, Spacer, Divider } from '@/components/common/layout';
+import { Heading, Text } from '@/components/common/typography';
+import { Card } from '@/components/common/cards';
+import { PrimaryButton, SecondaryButton } from '@/components/common/buttons';
+import { LoadingSpinner, ConfirmDialog } from '@/components/common/feedback';
+import { useUserProfile } from '@/src/hooks/useProfile';
+import { useLogoutMutation } from '@/src/hooks/useAuthMutation';
 
 export default function ProfileScreen() {
+  const router = useRouter();
+  const { data: profile, isLoading } = useUserProfile();
+  const logoutMutation = useLogoutMutation();
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      await logoutMutation.mutateAsync();
+      router.replace('/login' as any);
+    } catch (error) {
+      Alert.alert('Error', 'Failed to logout. Please try again.');
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <Screen>
+        <LoadingSpinner text="Loading profile..." />
+      </Screen>
+    );
+  }
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab Two</Text>
-      <View
-        style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
+    <Screen>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Container>
+          <Spacer size={16} />
+          <Heading level="h2">Profile</Heading>
+          <Spacer size={24} />
+
+          {profile && (
+            <>
+              <Card>
+                <Text variant="secondary" size="sm">
+                  Username
+                </Text>
+                <Spacer size={4} />
+                <Text weight="semibold" size="lg">
+                  {profile.username}
+                </Text>
+                <Spacer size={16} />
+
+                <Text variant="secondary" size="sm">
+                  Email
+                </Text>
+                <Spacer size={4} />
+                <Text weight="semibold" size="lg">
+                  {profile.email}
+                </Text>
+                <Spacer size={16} />
+
+                <Text variant="secondary" size="sm">
+                  Member Since
+                </Text>
+                <Spacer size={4} />
+                <Text weight="semibold" size="lg">
+                  {new Date(profile.createdAt).toLocaleDateString()}
+                </Text>
+              </Card>
+
+              <Spacer size={24} />
+
+              <Text weight="semibold" size="lg">
+                Settings
+              </Text>
+              <Spacer size={12} />
+
+              <SecondaryButton
+                title="Edit Profile"
+                onPress={() => router.push('/edit-profile' as any)}
+                fullWidth
+              />
+              <Spacer size={12} />
+
+              <SecondaryButton
+                title="Change Password"
+                onPress={() => router.push('/change-password' as any)}
+                fullWidth
+              />
+
+              <Spacer size={24} />
+              <Divider />
+              <Spacer size={24} />
+
+              <Text weight="semibold" size="lg">
+                Danger Zone
+              </Text>
+              <Spacer size={12} />
+
+              <PrimaryButton
+                title="Logout"
+                onPress={() => setShowLogoutDialog(true)}
+                variant="danger"
+                fullWidth
+                loading={logoutMutation.isPending}
+              />
+            </>
+          )}
+
+          <Spacer size={80} />
+        </Container>
+      </ScrollView>
+
+      <ConfirmDialog
+        visible={showLogoutDialog}
+        title="Logout"
+        message="Are you sure you want to logout?"
+        confirmText="Logout"
+        cancelText="Cancel"
+        variant="danger"
+        onConfirm={handleLogout}
+        onCancel={() => setShowLogoutDialog(false)}
+        loading={logoutMutation.isPending}
       />
-      <EditScreenInfo path="app/(main)/profile.tsx" />
-    </View>
+    </Screen>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
-  },
-});
+const styles = StyleSheet.create({});

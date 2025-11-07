@@ -1,41 +1,65 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Tabs } from "expo-router";
-import Colors from "@/constants/Colors";
-import { useColorScheme } from "@/components/useColorScheme";
-
-function TabBarIcon({ name, color }: { name: any; color: string }) {
-  return (
-    <FontAwesome
-      size={24}
-      style={{ marginBottom: -3 }}
-      name={name}
-      color={color}
-    />
-  );
-}
+import { Tabs } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { Colors } from '@/constants/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function MainLayout() {
-  const colorScheme = useColorScheme();
+  const insets = useSafeAreaInsets();
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+        tabBarActiveTintColor: Colors.primary,
+        tabBarInactiveTintColor: Colors.textTertiary,
         headerShown: false,
+        tabBarStyle: {
+          backgroundColor: Colors.white,
+          borderTopWidth: 1,
+          borderTopColor: Colors.border,
+          height: 60 + insets.bottom,
+          paddingBottom: insets.bottom + 8,
+          paddingTop: 8,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '500',
+        },
       }}
     >
       <Tabs.Screen
         name="home"
         options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+          title: 'Home',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="expenses"
+        options={{
+          title: 'Expenses',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="receipt" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="budget"
+        options={{
+          title: 'Budget',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="wallet" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Profile",
-          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
+          title: 'Profile',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person" size={size} color={color} />
+          ),
         }}
       />
     </Tabs>
