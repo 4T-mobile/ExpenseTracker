@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback, useEffect } from 'react';
+import React, { useRef, useState, useCallback, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -6,60 +6,63 @@ import {
   Dimensions,
   TouchableOpacity,
   ViewToken,
-} from 'react-native';
-import { useRouter } from 'expo-router';
-import * as Haptics from 'expo-haptics';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Colors, Spacing, Typography } from '@/constants/theme';
-import { PrimaryButton } from '@/components/common/buttons/PrimaryButton';
-import { Text } from '@/components/common/typography/Text';
+} from "react-native";
+import { useRouter } from "expo-router";
+import * as Haptics from "expo-haptics";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Colors, Spacing, Typography } from "@/constants/theme";
+import { PrimaryButton } from "@/components/common/buttons/PrimaryButton";
+import { Text } from "@/components/common/typography/Text";
 import {
   OnboardingSlide,
   OnboardingSlideData,
   OnboardingDots,
-} from '@/components/onboarding';
-import { onboardingStorage } from '@/src/utils/onboardingStorage';
+} from "@/components/onboarding";
+import { onboardingStorage } from "@/src/utils/onboardingStorage";
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 const ONBOARDING_SLIDES: OnboardingSlideData[] = [
   {
-    id: '1',
-    iconName: 'receipt-outline',
-    title: 'Track Your Expenses',
-    subtitle: 'Simple & Organized',
+    id: "1",
+    iconName: "receipt-outline",
+    title: "Track Your Expenses",
+    subtitle: "Simple & Organized",
     description:
-      'Easily log your daily expenses with categories like Food, Transport, Shopping, and more. Stay on top of where your money goes.',
+      "Easily log your daily expenses with categories like Food, Transport, Shopping, and more. Stay on top of where your money goes.",
   },
   {
-    id: '2',
-    iconName: 'wallet-outline',
-    title: 'Set Smart Budgets',
-    subtitle: 'Stay in Control',
+    id: "2",
+    iconName: "wallet-outline",
+    title: "Set Smart Budgets",
+    subtitle: "Stay in Control",
     description:
-      'Create weekly or monthly budgets and watch your spending progress. Get visual insights on how much you have spent vs. planned.',
+      "Create weekly or monthly budgets and watch your spending progress. Get visual insights on how much you have spent vs. planned.",
   },
   {
-    id: '3',
-    iconName: 'stats-chart-outline',
-    title: 'Analyze & Save',
-    subtitle: 'Make Better Decisions',
+    id: "3",
+    iconName: "stats-chart-outline",
+    title: "Analyze & Save",
+    subtitle: "Make Better Decisions",
     description:
-      'View statistics on your spending patterns - today, this week, or this month. Identify areas to save and reach your financial goals.',
+      "View statistics on your spending patterns - today, this week, or this month. Identify areas to save and reach your financial goals.",
   },
 ];
 
-export default function OnboardingScreen() {
+export default function OnboardingScreen({ initialStep = 0 }) {
+  const [currentStep, setCurrentStep] = useState(initialStep);
   const router = useRouter();
   const flatListRef = useRef<FlatList>(null);
-  const [currentStep, setCurrentStep] = useState(0);
 
   const isLastStep = currentStep === ONBOARDING_SLIDES.length - 1;
 
   useEffect(() => {
     const loadSavedStep = async () => {
       const state = await onboardingStorage.getState();
-      if (state.currentStep > 0 && state.currentStep < ONBOARDING_SLIDES.length) {
+      if (
+        state.currentStep > 0 &&
+        state.currentStep < ONBOARDING_SLIDES.length
+      ) {
         setCurrentStep(state.currentStep);
         flatListRef.current?.scrollToIndex({
           index: state.currentStep,
@@ -103,11 +106,13 @@ export default function OnboardingScreen() {
 
   const handleComplete = useCallback(async () => {
     await onboardingStorage.markAsCompleted();
-    router.replace('/(main)/home');
+    router.replace("/(main)/home");
   }, [router]);
 
   const renderSlide = useCallback(
-    ({ item }: { item: OnboardingSlideData }) => <OnboardingSlide data={item} />,
+    ({ item }: { item: OnboardingSlideData }) => (
+      <OnboardingSlide data={item} />
+    ),
     []
   );
 
@@ -155,9 +160,10 @@ export default function OnboardingScreen() {
 
         <View style={styles.buttonContainer}>
           <PrimaryButton
-            title={isLastStep ? 'Get Started' : 'Next'}
+            title={isLastStep ? "Get Started" : "Next"}
             onPress={handleNext}
             fullWidth
+            testID={isLastStep ? "start-btn" : "next-btn"}
           />
         </View>
       </View>
@@ -172,9 +178,9 @@ const styles = StyleSheet.create({
   },
   header: {
     height: 48,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
     paddingHorizontal: Spacing.md,
   },
   skipButton: {
@@ -182,13 +188,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
   },
   footer: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingHorizontal: Spacing.xl,
     paddingBottom: Spacing.lg,
     gap: Spacing.xl,
   },
   buttonContainer: {
-    width: '100%',
+    width: "100%",
     marginTop: Spacing.md,
   },
 });

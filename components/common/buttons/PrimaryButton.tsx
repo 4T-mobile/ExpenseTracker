@@ -1,13 +1,19 @@
-import React from 'react';
+import React from "react";
 import {
   TouchableOpacity,
   Text,
   StyleSheet,
   ActivityIndicator,
   View,
-} from 'react-native';
-import * as Haptics from 'expo-haptics';
-import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
+} from "react-native";
+import * as Haptics from "expo-haptics";
+import {
+  Colors,
+  Typography,
+  Spacing,
+  BorderRadius,
+  Shadows,
+} from "@/constants/theme";
 
 interface PrimaryButtonProps {
   title: string;
@@ -15,10 +21,11 @@ interface PrimaryButtonProps {
   loading?: boolean;
   disabled?: boolean;
   fullWidth?: boolean;
-  size?: 'sm' | 'md' | 'lg';
-  variant?: 'primary' | 'danger';
+  size?: "sm" | "md" | "lg";
+  variant?: "primary" | "danger";
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  testID?: string; // ← THÊM DÒNG NÀY
 }
 
 export const PrimaryButton: React.FC<PrimaryButtonProps> = ({
@@ -27,10 +34,11 @@ export const PrimaryButton: React.FC<PrimaryButtonProps> = ({
   loading = false,
   disabled = false,
   fullWidth = false,
-  size = 'md',
-  variant = 'primary',
+  size = "md",
+  variant = "primary",
   leftIcon,
   rightIcon,
+  testID,
 }) => {
   const handlePress = () => {
     if (!disabled && !loading) {
@@ -41,14 +49,14 @@ export const PrimaryButton: React.FC<PrimaryButtonProps> = ({
 
   const getButtonBackgroundColor = () => {
     if (disabled) return Colors.disabled;
-    return variant === 'danger' ? Colors.danger : Colors.primary;
+    return variant === "danger" ? Colors.danger : Colors.primary;
   };
 
   const getButtonHeight = () => {
     switch (size) {
-      case 'sm':
+      case "sm":
         return 36;
-      case 'lg':
+      case "lg":
         return 56;
       default:
         return 48;
@@ -57,9 +65,9 @@ export const PrimaryButton: React.FC<PrimaryButtonProps> = ({
 
   const getFontSize = () => {
     switch (size) {
-      case 'sm':
+      case "sm":
         return Typography.fontSize.sm;
-      case 'lg':
+      case "lg":
         return Typography.fontSize.lg;
       default:
         return Typography.fontSize.base;
@@ -73,13 +81,14 @@ export const PrimaryButton: React.FC<PrimaryButtonProps> = ({
         {
           backgroundColor: getButtonBackgroundColor(),
           height: getButtonHeight(),
-          width: fullWidth ? '100%' : undefined,
+          width: fullWidth ? "100%" : undefined,
         },
         disabled && styles.disabledButton,
       ]}
       onPress={handlePress}
       disabled={disabled || loading}
       activeOpacity={0.7}
+      testID={testID} // ← THIS FIXES EVERYTHING
     >
       {loading ? (
         <ActivityIndicator color={Colors.white} size="small" />
@@ -106,15 +115,15 @@ const styles = StyleSheet.create({
   button: {
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.lg,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
     ...Shadows.sm,
   },
   content: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   text: {
     color: Colors.white,
