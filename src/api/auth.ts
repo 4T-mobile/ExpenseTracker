@@ -17,8 +17,9 @@ export const register = (data: RegisterRequest) =>
 export const refreshToken = (data: RefreshTokenRequest) =>
   api.post<RefreshTokenResponse>("/auth/refresh", data);
 
-export const logout = () =>
-  api.post("/auth/logout");
+export const logout = () => api.post("/auth/logout");
 
-export const getProfile = () =>
-  api.get<User>("/auth/me");
+export const getProfile = () => api.get<User>("/auth/me");
+
+// export const getProfile = () =>
+//   api.get<User>("/auth/me");
