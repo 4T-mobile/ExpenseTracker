@@ -27,8 +27,20 @@ const onTokenRefreshed = (token: string) => {
   refreshSubscribers = [];
 };
 
+const AUTH_ENDPOINTS = ["/auth/login", "/auth/register", "/auth/refresh"];
+
+const isAuthEndpoint = (url?: string): boolean => {
+  if (!url) return false;
+  return AUTH_ENDPOINTS.some((endpoint) => url.includes(endpoint));
+};
+
 api.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
+    // Skip adding token for auth endpoints to avoid stale token issues.
+    if (isAuthEndpoint(config.url)) {
+      return config;
+    }
+
     const token = await tokenStorage.getToken();
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -39,13 +51,6 @@ api.interceptors.request.use(
     return Promise.reject(error);
   }
 );
-
-const AUTH_ENDPOINTS = ["/auth/login", "/auth/register", "/auth/refresh"];
-
-const isAuthEndpoint = (url?: string): boolean => {
-  if (!url) return false;
-  return AUTH_ENDPOINTS.some((endpoint) => url.includes(endpoint));
-};
 
 api.interceptors.response.use(
   (response) => response,

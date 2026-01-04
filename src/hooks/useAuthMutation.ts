@@ -3,7 +3,6 @@ import { useRouter } from "expo-router";
 import { login, register, logout, getProfile } from "../api/auth";
 import { tokenStorage, userStorage } from "../utils/storage";
 import { onboardingStorage } from "../utils/onboardingStorage";
-import { logError } from "../utils/logger";
 
 export const useLoginMutation = () => {
   const router = useRouter();
@@ -35,9 +34,6 @@ export const useLoginMutation = () => {
         router.replace("/onboarding");
       }
     },
-    onError: (err) => {
-      logError(err, "login");
-    },
   });
 };
 
@@ -65,9 +61,6 @@ export const useRegisterMutation = () => {
       queryClient.setQueryData(["user"], user);
       router.replace("/onboarding");
     },
-    onError: (err) => {
-      logError(err, "register");
-    },
   });
 };
 
@@ -84,8 +77,7 @@ export const useLogoutMutation = () => {
       queryClient.clear();
       router.replace("/(auth)/login");
     },
-    onError: async (err) => {
-      logError(err, "logout");
+    onError: async () => {
       await tokenStorage.clearTokens();
       await userStorage.clearUser();
 
