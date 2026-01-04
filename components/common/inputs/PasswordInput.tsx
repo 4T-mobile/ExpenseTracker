@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { TextInput } from './TextInput';
-import { Colors } from '@/constants/theme';
+import React, { useState } from "react";
+import { TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { TextInput } from "./TextInput";
+import { Colors } from "@/constants/theme";
 
 interface PasswordInputProps {
   label?: string;
@@ -16,12 +16,12 @@ interface PasswordInputProps {
 }
 
 export const PasswordInput: React.FC<PasswordInputProps> = ({
-  label = 'Password',
+  label = "Password",
   error,
   helperText,
   value,
   onChangeText,
-  placeholder = 'Enter password',
+  placeholder = "Enter password",
   containerStyle,
   editable = true,
 }) => {
@@ -35,6 +35,8 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
       value={value}
       onChangeText={onChangeText}
       placeholder={placeholder}
+      // REQUIRED: Explicit placeholder color for Android APK production builds
+      // PasswordInput extends TextInput which handles this, but ensuring best practices
       secureTextEntry={!showPassword}
       autoCapitalize="none"
       autoCorrect={false}
@@ -46,7 +48,7 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
           <Ionicons
-            name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+            name={showPassword ? "eye-off-outline" : "eye-outline"}
             size={22}
             color={Colors.textSecondary}
           />

@@ -22,22 +22,25 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.my_app.test",
+      "versionCode": 1,
+      "minSdkVersion": 21,
+      "targetSdkVersion": 34,
+      "usesCleartextTraffic": true
     },
     "web": {
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": [
-      "expo-router",
-      "sentry-expo"
-    ],
+    "plugins": ["expo-router"],
     "experiments": {
       "typedRoutes": true
     },
     "extra": {
       "router": {},
+      "EXPO_PUBLIC_API_URL": "http://103.82.132.77:3000",
       "eas": {
         "projectId": "935f00ce-1cde-4d2c-b9d8-41350cc12e1c"
       }

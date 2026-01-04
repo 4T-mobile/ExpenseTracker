@@ -5,9 +5,11 @@ import { useRouter } from "expo-router";
 import { AxiosError } from "axios";
 import { LoginInput, LoginSchema } from "@/src/schemas/auth.schema";
 import { useLoginMutation } from "@/src/hooks/useAuthMutation";
+import { Colors } from "@/constants/theme";
 
 export default function LoginScreen() {
   const router = useRouter();
+
   const {
     control,
     handleSubmit,
@@ -24,8 +26,8 @@ export default function LoginScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Sign In</Text>
+    <View style={[styles.container, { backgroundColor: Colors.white }]}>
+      <Text style={[styles.title, { color: Colors.textPrimary }]}>Sign In</Text>
 
       {/* Email or Username Field */}
       <Controller
@@ -33,8 +35,15 @@ export default function LoginScreen() {
         name="emailOrUsername"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              {
+                borderColor: Colors.border,
+                color: Colors.textPrimary,
+              },
+            ]}
             placeholder="Email or Username"
+            placeholderTextColor={Colors.textSecondary}
             keyboardType="default"
             autoCapitalize="none"
             onBlur={onBlur}
@@ -43,7 +52,9 @@ export default function LoginScreen() {
           />
         )}
       />
-      {errors.emailOrUsername && <Text style={styles.error}>{errors.emailOrUsername.message}</Text>}
+      {errors.emailOrUsername && (
+        <Text style={styles.error}>{errors.emailOrUsername.message}</Text>
+      )}
 
       {/* Password Field */}
       <Controller
@@ -51,8 +62,15 @@ export default function LoginScreen() {
         name="password"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              {
+                borderColor: Colors.border,
+                color: Colors.textPrimary,
+              },
+            ]}
             placeholder="Password"
+            placeholderTextColor={Colors.textSecondary}
             secureTextEntry
             onBlur={onBlur}
             onChangeText={onChange}
@@ -67,8 +85,8 @@ export default function LoginScreen() {
       {mutation.error && (
         <View style={styles.apiErrorContainer}>
           <Text style={styles.apiError}>
-            {(mutation.error as AxiosError<{ message: string }>)?.response?.data?.message ||
-             "Login failed. Please try again."}
+            {(mutation.error as AxiosError<{ message: string }>)?.response?.data
+              ?.message || "Login failed. Please try again."}
           </Text>
         </View>
       )}
@@ -81,7 +99,7 @@ export default function LoginScreen() {
 
       <View style={styles.footer}>
         <Text
-          style={styles.link}
+          style={[styles.link, { color: Colors.primary }]}
           onPress={() => router.push("/(auth)/register")}
         >
           Don’t have an account? Register
@@ -96,7 +114,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     padding: 24,
-    backgroundColor: "#fff",
   },
   title: {
     fontSize: 26,
@@ -106,7 +123,6 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
     borderRadius: 8,
     padding: 12,
     marginBottom: 8,
@@ -126,5 +142,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   footer: { marginTop: 20, alignItems: "center" },
-  link: { color: "#007AFF", fontSize: 15 },
+  link: { fontSize: 15 },
 });

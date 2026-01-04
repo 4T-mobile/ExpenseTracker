@@ -1,14 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   TextInput as RNTextInput,
   Text,
   StyleSheet,
   TextInputProps as RNTextInputProps,
-} from 'react-native';
-import { Colors, Typography, Spacing, BorderRadius, Layout } from '@/constants/theme';
+} from "react-native";
+import {
+  Colors,
+  Typography,
+  Spacing,
+  BorderRadius,
+  Layout,
+} from "@/constants/theme";
 
-interface TextInputProps extends Omit<RNTextInputProps, 'style'> {
+interface TextInputProps extends Omit<RNTextInputProps, "style"> {
   label?: string;
   error?: string;
   helperText?: string;
@@ -43,7 +49,8 @@ export const TextInput: React.FC<TextInputProps> = ({
           styles.inputContainer,
           {
             borderColor: getBorderColor(),
-            backgroundColor: editable ? Colors.white : Colors.backgroundSecondary,
+            // Use white background for inputs for consistent visibility in APK
+            backgroundColor: Colors.white,
           },
         ]}
       >
@@ -54,7 +61,9 @@ export const TextInput: React.FC<TextInputProps> = ({
             leftIcon ? styles.inputWithLeftIcon : undefined,
             rightIcon ? styles.inputWithRightIcon : undefined,
           ]}
-          placeholderTextColor={Colors.textTertiary}
+          // Use a darker placeholder for better contrast on white background
+          // (black/gray) — ensures visibility in Android production APKs
+          placeholderTextColor={Colors.textSecondary || "#666666"}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           editable={editable}
@@ -63,7 +72,9 @@ export const TextInput: React.FC<TextInputProps> = ({
         {rightIcon && <View style={styles.rightIcon}>{rightIcon}</View>}
       </View>
       {error && <Text style={styles.errorText}>{error}</Text>}
-      {helperText && !error && <Text style={styles.helperText}>{helperText}</Text>}
+      {helperText && !error && (
+        <Text style={styles.helperText}>{helperText}</Text>
+      )}
     </View>
   );
 };
@@ -79,8 +90,8 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     borderWidth: 1,
     borderRadius: BorderRadius.md,
     height: Layout.inputHeight,
@@ -89,6 +100,8 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: Typography.fontSize.base,
+    // REQUIRED: Explicit text color prevents rendering issues in Android APK production builds
+    // Must be set alongside placeholderTextColor for consistent appearance
     color: Colors.textPrimary,
     padding: 0,
   },
@@ -99,12 +112,12 @@ const styles = StyleSheet.create({
     marginRight: Spacing.sm,
   },
   leftIcon: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   rightIcon: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   errorText: {
     fontSize: Typography.fontSize.xs,

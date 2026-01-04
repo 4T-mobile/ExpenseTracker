@@ -2,7 +2,8 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { tokenStorage } from "../utils/storage";
 import { RefreshTokenRequest, RefreshTokenResponse } from "../types/auth.type";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://192.168.1.2:3000";
+// const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://103.82.132.77:3000";
+const BASE_URL = "http://103.82.132.77:3000";
 
 const api = axios.create({
   baseURL: `${BASE_URL}/api/v1`,
@@ -43,7 +44,9 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+    const originalRequest = error.config as InternalAxiosRequestConfig & {
+      _retry?: boolean;
+    };
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {

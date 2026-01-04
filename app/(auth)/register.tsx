@@ -5,9 +5,11 @@ import { useRouter } from "expo-router";
 import { AxiosError } from "axios";
 import { RegisterInput, RegisterSchema } from "@/src/schemas/auth.schema";
 import { useRegisterMutation } from "@/src/hooks/useAuthMutation";
+import { Colors } from "@/constants/theme";
 
 export default function RegisterScreen() {
   const router = useRouter();
+
   const {
     control,
     handleSubmit,
@@ -24,8 +26,10 @@ export default function RegisterScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Create Account</Text>
+    <View style={[styles.container, { backgroundColor: Colors.white }]}>
+      <Text style={[styles.title, { color: Colors.textPrimary }]}>
+        Create Account
+      </Text>
 
       {/* Username Field */}
       <Controller
@@ -33,8 +37,15 @@ export default function RegisterScreen() {
         name="username"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              {
+                borderColor: Colors.border,
+                color: Colors.textPrimary,
+              },
+            ]}
             placeholder="Username"
+            placeholderTextColor={Colors.textSecondary}
             autoCapitalize="none"
             onBlur={onBlur}
             onChangeText={onChange}
@@ -42,15 +53,24 @@ export default function RegisterScreen() {
           />
         )}
       />
-      {errors.username && <Text style={styles.error}>{errors.username.message}</Text>}
+      {errors.username && (
+        <Text style={styles.error}>{errors.username.message}</Text>
+      )}
 
       <Controller
         control={control}
         name="email"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              {
+                borderColor: Colors.border,
+                color: Colors.textPrimary,
+              },
+            ]}
             placeholder="Email"
+            placeholderTextColor={Colors.textSecondary}
             autoCapitalize="none"
             keyboardType="email-address"
             onBlur={onBlur}
@@ -67,8 +87,15 @@ export default function RegisterScreen() {
         name="password"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              {
+                borderColor: Colors.border,
+                color: Colors.textPrimary,
+              },
+            ]}
             placeholder="Password"
+            placeholderTextColor={Colors.textSecondary}
             secureTextEntry
             onBlur={onBlur}
             onChangeText={onChange}
@@ -83,8 +110,8 @@ export default function RegisterScreen() {
       {mutation.error && (
         <View style={styles.apiErrorContainer}>
           <Text style={styles.apiError}>
-            {(mutation.error as AxiosError<{ message: string }>)?.response?.data?.message ||
-             "Registration failed. Please try again."}
+            {(mutation.error as AxiosError<{ message: string }>)?.response?.data
+              ?.message || "Registration failed. Please try again."}
           </Text>
         </View>
       )}
@@ -109,7 +136,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     padding: 24,
-    backgroundColor: "#fff",
   },
   title: {
     fontSize: 26,
@@ -119,7 +145,6 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
     borderRadius: 8,
     padding: 12,
     marginBottom: 8,
@@ -139,5 +164,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   footer: { marginTop: 20, alignItems: "center" },
-  link: { color: "#007AFF", fontSize: 15 },
+  link: { fontSize: 15 },
 });
