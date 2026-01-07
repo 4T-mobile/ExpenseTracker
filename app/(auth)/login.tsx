@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     marginBottom: 8,
+    color: "#000",
   },
   error: { color: "red", fontSize: 13, marginBottom: 8 },
   apiErrorContainer: {
