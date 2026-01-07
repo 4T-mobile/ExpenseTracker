@@ -14,6 +14,26 @@ import { useColorScheme } from "@/components/useColorScheme";
 import { tokenStorage, clearAllStorage } from "@/src/utils/storage";
 import { onboardingStorage } from "@/src/utils/onboardingStorage";
 import { setSessionExpiredHandler } from "@/src/api/client";
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({
+  dsn: 'https://af537a734b5b1c6d5c2e0b672d77ce00@o4510500035297280.ingest.us.sentry.io/4510670050689024',
+
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
+
+  // Enable Logs
+  enableLogs: true,
+
+  // Configure Session Replay
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1,
+  integrations: [Sentry.mobileReplayIntegration(), Sentry.feedbackIntegration()],
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
 export { ErrorBoundary } from "expo-router";
 
 const queryClient = new QueryClient();
@@ -22,7 +42,7 @@ SplashScreen.preventAutoHideAsync();
 
 type AppState = 'loading' | 'unauthenticated' | 'onboarding' | 'authenticated';
 
-export default function RootLayout() {
+export default Sentry.wrap(function RootLayout() {
   const [fontsLoaded, fontsError] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...FontAwesome.font,
@@ -74,7 +94,7 @@ export default function RootLayout() {
   if (!fontsLoaded || appState === 'loading') return null;
 
   return <RootLayoutNav />;
-}
+});
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
