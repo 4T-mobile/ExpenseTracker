@@ -14,6 +14,7 @@ import { useColorScheme } from "@/components/useColorScheme";
 import { tokenStorage, clearAllStorage } from "@/src/utils/storage";
 import { onboardingStorage } from "@/src/utils/onboardingStorage";
 import { setSessionExpiredHandler } from "@/src/api/client";
+
 import * as Sentry from "@sentry/react-native";
 import {
   setupGlobalErrorHandler,
@@ -22,14 +23,12 @@ import {
 
 Sentry.init({
   dsn: "https://e6938b31a5c93d7dc2f5015b4f646176@o4510500035297280.ingest.us.sentry.io/4510502317916160",
-
   // Adds more context data to events (IP address, cookies, user, etc.)
   // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
   sendDefaultPii: true,
 
   // Enable Logs
   enableLogs: true,
-
   // Enable automatic session tracking for crash-free sessions/users
   enableAutoSessionTracking: true,
 
