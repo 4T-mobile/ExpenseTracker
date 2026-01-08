@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
+import * as Sentry from "@sentry/react-native";
 import { login, register, logout, getProfile } from "../api/auth";
 import { tokenStorage, userStorage } from "../utils/storage";
 import { onboardingStorage } from "../utils/onboardingStorage";
@@ -24,6 +25,13 @@ export const useLoginMutation = () => {
       await tokenStorage.setToken(accessToken);
       await tokenStorage.setRefreshToken(refreshToken);
       await userStorage.setUser(user);
+
+      // Set user context in Sentry for crash-free users tracking
+      Sentry.setUser({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+      });
 
       queryClient.setQueryData(["user"], user);
 
@@ -58,6 +66,13 @@ export const useRegisterMutation = () => {
       await tokenStorage.setRefreshToken(refreshToken);
       await userStorage.setUser(user);
 
+      // Set user context in Sentry for crash-free users tracking
+      Sentry.setUser({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+      });
+
       queryClient.setQueryData(["user"], user);
       router.replace("/onboarding");
     },
@@ -74,12 +89,18 @@ export const useLogoutMutation = () => {
       await tokenStorage.clearTokens();
       await userStorage.clearUser();
 
+      // Clear user context in Sentry
+      Sentry.setUser(null);
+
       queryClient.clear();
       router.replace("/(auth)/login");
     },
     onError: async () => {
       await tokenStorage.clearTokens();
       await userStorage.clearUser();
+
+      // Clear user context in Sentry
+      Sentry.setUser(null);
 
       queryClient.clear();
       router.replace("/(auth)/login");
