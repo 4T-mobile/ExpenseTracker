@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
-import { StyleSheet, ScrollView, Alert } from 'react-native';
-import { useRouter } from 'expo-router';
-import { Screen, Container, Spacer, Divider } from '@/components/common/layout';
-import { Heading, Text } from '@/components/common/typography';
-import { Card } from '@/components/common/cards';
-import { PrimaryButton, SecondaryButton } from '@/components/common/buttons';
-import { LoadingSpinner, ConfirmDialog } from '@/components/common/feedback';
-import { useUserProfile } from '@/src/hooks/useProfile';
-import { useLogoutMutation } from '@/src/hooks/useAuthMutation';
+import React, { useState } from "react";
+import { StyleSheet, ScrollView, Alert } from "react-native";
+import { useRouter } from "expo-router";
+import * as Sentry from "@sentry/react-native";
+import { Screen, Container, Spacer, Divider } from "@/components/common/layout";
+import { Heading, Text } from "@/components/common/typography";
+import { Card } from "@/components/common/cards";
+import { PrimaryButton, SecondaryButton } from "@/components/common/buttons";
+import { LoadingSpinner, ConfirmDialog } from "@/components/common/feedback";
+import { useUserProfile } from "@/src/hooks/useProfile";
+import { useLogoutMutation } from "@/src/hooks/useAuthMutation";
+import { testSentryError, simulateApiError } from "@/src/utils/sentryTesting";
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -18,10 +20,18 @@ export default function ProfileScreen() {
   const handleLogout = async () => {
     try {
       await logoutMutation.mutateAsync();
-      router.replace('/login' as any);
+      router.replace("/login" as any);
     } catch (error) {
-      Alert.alert('Error', 'Failed to logout. Please try again.');
+      Alert.alert("Error", "Failed to logout. Please try again.");
     }
+  };
+
+  const handleTestSentryError = () => {
+    testSentryError("User Profile screen");
+  };
+
+  const handleSimulateApiError = () => {
+    simulateApiError();
   };
 
   if (isLoading) {
@@ -79,14 +89,14 @@ export default function ProfileScreen() {
 
               <SecondaryButton
                 title="Edit Profile"
-                onPress={() => router.push('/edit-profile' as any)}
+                onPress={() => router.push("/edit-profile" as any)}
                 fullWidth
               />
               <Spacer size={12} />
 
               <SecondaryButton
                 title="Change Password"
-                onPress={() => router.push('/change-password' as any)}
+                onPress={() => router.push("/change-password" as any)}
                 fullWidth
               />
 
@@ -97,6 +107,20 @@ export default function ProfileScreen() {
               <Text weight="semibold" size="lg">
                 Danger Zone
               </Text>
+              <Spacer size={12} />
+
+              <SecondaryButton
+                title="Test Sentry Error (Profile)"
+                onPress={handleTestSentryError}
+                fullWidth
+              />
+              <Spacer size={12} />
+
+              <SecondaryButton
+                title="Test API Error (Simulated)"
+                onPress={handleSimulateApiError}
+                fullWidth
+              />
               <Spacer size={12} />
 
               <PrimaryButton

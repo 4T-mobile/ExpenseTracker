@@ -14,22 +14,64 @@ import { useColorScheme } from "@/components/useColorScheme";
 import { tokenStorage, clearAllStorage } from "@/src/utils/storage";
 import { onboardingStorage } from "@/src/utils/onboardingStorage";
 import { setSessionExpiredHandler } from "@/src/api/client";
+import * as Sentry from "@sentry/react-native";
+import {
+  setupGlobalErrorHandler,
+  sendTestMessage,
+} from "@/src/utils/sentryTesting";
+
+Sentry.init({
+  dsn: "https://e6938b31a5c93d7dc2f5015b4f646176@o4510500035297280.ingest.us.sentry.io/4510502317916160",
+
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
+
+  // Enable Logs
+  enableLogs: true,
+
+  // Enable automatic session tracking for crash-free sessions/users
+  enableAutoSessionTracking: true,
+
+  // Set high trace sample rate for session tracking
+  tracesSampleRate: 1.0,
+
+  // Configure Session Replay
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1,
+  integrations: [
+    Sentry.mobileReplayIntegration(),
+    Sentry.feedbackIntegration(),
+  ],
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
 export { ErrorBoundary } from "expo-router";
 
 const queryClient = new QueryClient();
 
 SplashScreen.preventAutoHideAsync();
 
-type AppState = 'loading' | 'unauthenticated' | 'onboarding' | 'authenticated';
+type AppState = "loading" | "unauthenticated" | "onboarding" | "authenticated";
 
-export default function RootLayout() {
+export default Sentry.wrap(function RootLayout() {
   const [fontsLoaded, fontsError] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...FontAwesome.font,
   });
 
-  const [appState, setAppState] = useState<AppState>('loading');
+  const [appState, setAppState] = useState<AppState>("loading");
   const router = useRouter();
+
+  // Initialize Sentry global error handler and send startup message (runs once)
+  useEffect(() => {
+    setupGlobalErrorHandler();
+    sendTestMessage(
+      "Sentry startup test message - App initialized successfully",
+      "info"
+    );
+  }, []);
 
   useEffect(() => {
     if (fontsError) throw fontsError;
@@ -37,10 +79,10 @@ export default function RootLayout() {
       (async () => {
         const isAuthenticated = await tokenStorage.isAuthenticated();
         if (!isAuthenticated) {
-          setAppState('unauthenticated');
+          setAppState("unauthenticated");
         } else {
           const hasCompletedOnboarding = await onboardingStorage.isCompleted();
-          setAppState(hasCompletedOnboarding ? 'authenticated' : 'onboarding');
+          setAppState(hasCompletedOnboarding ? "authenticated" : "onboarding");
         }
         SplashScreen.hideAsync();
       })();
@@ -48,16 +90,16 @@ export default function RootLayout() {
   }, [fontsLoaded, fontsError]);
 
   useEffect(() => {
-    if (appState === 'loading') return;
+    if (appState === "loading") return;
 
     switch (appState) {
-      case 'unauthenticated':
+      case "unauthenticated":
         router.replace("/(auth)/login");
         break;
-      case 'onboarding':
+      case "onboarding":
         router.replace("/onboarding");
         break;
-      case 'authenticated':
+      case "authenticated":
         router.replace("/(main)/home");
         break;
     }
@@ -67,14 +109,14 @@ export default function RootLayout() {
     setSessionExpiredHandler(async () => {
       await clearAllStorage();
       queryClient.clear();
-      setAppState('unauthenticated');
+      setAppState("unauthenticated");
     });
   }, []);
 
-  if (!fontsLoaded || appState === 'loading') return null;
+  if (!fontsLoaded || appState === "loading") return null;
 
   return <RootLayoutNav />;
-}
+});
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
